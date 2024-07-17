@@ -109,11 +109,12 @@ class SPIN:
         image: Image.Image = self.get_image(image_id)
 
         cols: int = 3
-        rows: int = (self.num_cocos + cols - 1) // cols
-
+        rows: int = 1
+        names: List[str] = ["Whole", "Part", "Subpart"]
         for index, coco in enumerate(self.cocos, start=1):
             plt.subplot(rows, cols, index)
             plt.axis("off")
+            plt.title(f"{names[index-1]}")
             plt.imshow(image)
             anns: List[int] = coco.getAnnIds(imgIds=image_id)
             loaded_anns: List[Dict[str, Union[str, int]]] = coco.loadAnns(anns)
@@ -191,9 +192,9 @@ class SPIN:
         save_name: str = "spin.zip",
     ) -> None:
         """
-        Downloads a	file from SharePoint using a shared	link.
+        Downloads a	file using a shared	link.
 
-        :param sharepoint_link:	The	shared link	URL	to the SharePoint file.
+        :param sharepoint_link:	The	shared link	URL	to the file.
         :param save_directory: The directory where the file	should be saved.
         :param save_name: The name to save the file	as.
         :return: None.
