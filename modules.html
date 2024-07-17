@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPIN API Modules &mdash; SPIN API 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=8d563738"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to SPIN API’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            SPIN API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SPIN API Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spin.spin.SPIN"><code class="docutils literal notranslate"><span class="pre">SPIN</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.__init__"><code class="docutils literal notranslate"><span class="pre">SPIN.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.display_annotations"><code class="docutils literal notranslate"><span class="pre">SPIN.display_annotations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.download_spin"><code class="docutils literal notranslate"><span class="pre">SPIN.download_spin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.getImgIds"><code class="docutils literal notranslate"><span class="pre">SPIN.getImgIds()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.get_categories"><code class="docutils literal notranslate"><span class="pre">SPIN.get_categories()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.get_image"><code class="docutils literal notranslate"><span class="pre">SPIN.get_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.get_object_name_for_file"><code class="docutils literal notranslate"><span class="pre">SPIN.get_object_name_for_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.rasterize_coco_segmentations"><code class="docutils literal notranslate"><span class="pre">SPIN.rasterize_coco_segmentations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.spin.SPIN.rasterize_dataset"><code class="docutils literal notranslate"><span class="pre">SPIN.rasterize_dataset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#spin.types.Entry"><code class="docutils literal notranslate"><span class="pre">Entry</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spin.types.Entry.id"><code class="docutils literal notranslate"><span class="pre">Entry.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spin.types.Entry.name"><code class="docutils literal notranslate"><span class="pre">Entry.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#spin.exceptions.InitialRequestError"><code class="docutils literal notranslate"><span class="pre">InitialRequestError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spin.helpers.unzip_file"><code class="docutils literal notranslate"><span class="pre">unzip_file()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SPIN API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SPIN API Modules</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-spin.spin">
+<span id="spin-api-modules"></span><h1>SPIN API Modules<a class="headerlink" href="#module-spin.spin" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="spin.spin.SPIN">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spin.spin.</span></span><span class="sig-name descname"><span class="pre">SPIN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotation_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'test'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the SPINViewer with annotations and image directories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>annotation_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory containing     annotation files.</p></li>
+<li><p><strong>image_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory     containing images.</p></li>
+<li><p><strong>split</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Dataset split, e.g., “train”,     “test”. Default is “test”.</p></li>
+<li><p><strong>download</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Download data.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.display_annotations">
+<span class="sig-name descname"><span class="pre">display_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[30,</span> <span class="pre">20]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">draw_bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.display_annotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.display_annotations" title="Link to this definition"></a></dt>
+<dd><p>Display annotations     for     a given image ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – ID     of the image to display.</p></li>
+<li><p><strong>fig_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – Size of the figure     to display.     Default is [30, 20].</p></li>
+<li><p><strong>draw_bbox</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, draw bounding boxes. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.download_spin">
+<span class="sig-name descname"><span class="pre">download_spin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">link</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://joshmyersdean.github.io/spin/spin_coco.zip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spin_jsons'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spin.zip'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.download_spin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.download_spin" title="Link to this definition"></a></dt>
+<dd><p>Downloads a     file using a shared     link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sharepoint_link</strong> – The     shared link     URL     to the file.</p></li>
+<li><p><strong>save_directory</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory where the file     should be saved.</p></li>
+<li><p><strong>save_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name to save the file     as.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.getImgIds">
+<span class="sig-name descname"><span class="pre">getImgIds</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.getImgIds"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.getImgIds" title="Link to this definition"></a></dt>
+<dd><p>Get     a list of all image     IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of image IDs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.get_categories">
+<span class="sig-name descname"><span class="pre">get_categories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">granularity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'subpart'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.get_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.get_categories" title="Link to this definition"></a></dt>
+<dd><p>Get     the     categories for a given granularity level.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>granularity</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Level of granularity (“subpart”, “part”, “whole”). Default is “subpart”.</p></li>
+<li><p><strong>verbose</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, prints additional information. Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <a class="reference internal" href="#spin.types.Entry" title="spin.types.Entry"><code class="xref py py-class docutils literal notranslate"><span class="pre">Entry</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary     of categories.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – If the     granularity     is not supported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.get_image">
+<span class="sig-name descname"><span class="pre">get_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.get_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.get_image" title="Link to this definition"></a></dt>
+<dd><p>Get     the     image corresponding     to the given image ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>image_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – ID     of the image to retrieve.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>PIL Image object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.get_object_name_for_file">
+<span class="sig-name descname"><span class="pre">get_object_name_for_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.get_object_name_for_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.get_object_name_for_file" title="Link to this definition"></a></dt>
+<dd><p>Get     the     object name     corresponding to the given image ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>img_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – ID of the image.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Object name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.rasterize_coco_segmentations">
+<span class="sig-name descname"><span class="pre">rasterize_coco_segmentations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coco</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background_class</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.rasterize_coco_segmentations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.rasterize_coco_segmentations" title="Link to this definition"></a></dt>
+<dd><p>Rasterizes COCO segmentations for a     specified image, allowing the user to specify which     class is the background.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>coco</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">COCO</span></code></span>) – COCO object containing     the     dataset annotations.</p></li>
+<li><p><strong>image_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – ID     of the image to rasterize segmentations for.</p></li>
+<li><p><strong>background_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Class ID to be used as the     background.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A 2D numpy     array with the same     dimensions as the image, where each     pixel value     represents the class ID.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="spin.spin.SPIN.rasterize_dataset">
+<span class="sig-name descname"><span class="pre">rasterize_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'spin_dataset/annotations'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/spin.html#SPIN.rasterize_dataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.spin.SPIN.rasterize_dataset" title="Link to this definition"></a></dt>
+<dd><p>Rasterizes COCO segmentations for a     specified split for     all     granularities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>save_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Where to save annotations.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-spin.types">
+<dt class="sig sig-object py" id="spin.types.Entry">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spin.types.</span></span><span class="sig-name descname"><span class="pre">Entry</span></span><a class="reference internal" href="_modules/spin/types.html#Entry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.types.Entry" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spin.types.Entry.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></em><a class="headerlink" href="#spin.types.Entry.id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="spin.types.Entry.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#spin.types.Entry.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception" id="module-spin.exceptions">
+<span id="module-spin.object_mapping"></span><dt class="sig sig-object py" id="spin.exceptions.InitialRequestError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">spin.exceptions.</span></span><span class="sig-name descname"><span class="pre">InitialRequestError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">status_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/exceptions.html#InitialRequestError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.exceptions.InitialRequestError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for errors in the initial request.</p>
+</dd></dl>
+
+<dl class="py function" id="module-spin.helpers">
+<dt class="sig sig-object py" id="spin.helpers.unzip_file">
+<span class="sig-prename descclassname"><span class="pre">spin.helpers.</span></span><span class="sig-name descname"><span class="pre">unzip_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extract_to</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/spin/helpers.html#unzip_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#spin.helpers.unzip_file" title="Link to this definition"></a></dt>
+<dd><p>Unzips a file to a specified directory. All files in the zipped folder
+will be placed directly in the target directory without preserving folder structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zip_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The path to the zip file.</p></li>
+<li><p><strong>extract_to</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory where the files should be extracted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to SPIN API’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

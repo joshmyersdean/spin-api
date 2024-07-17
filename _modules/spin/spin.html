@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>spin.spin &mdash; SPIN API 1.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=8d563738"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            SPIN API
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">SPIN API Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SPIN API</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">spin.spin</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for spin.spin</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">pycocotools.coco</span> <span class="kn">import</span> <span class="n">COCO</span>
+<span class="kn">from</span> <span class="nn">pycocotools</span> <span class="kn">import</span> <span class="n">mask</span> <span class="k">as</span> <span class="n">maskUtils</span>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">Entry</span>
+<span class="kn">from</span> <span class="nn">.object_mapping</span> <span class="kn">import</span> <span class="n">file_to_object_mapping</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">InitialRequestError</span>
+<span class="kn">from</span> <span class="nn">.helpers</span> <span class="kn">import</span> <span class="n">unzip_file</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+
+<div class="viewcode-block" id="SPIN">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN">[docs]</a>
+<span class="k">class</span> <span class="nc">SPIN</span><span class="p">:</span>
+<div class="viewcode-block" id="SPIN.__init__">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.__init__">[docs]</a>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">annotation_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">image_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">split</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span>
+        <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the SPINViewer with annotations and image directories.</span>
+
+<span class="sd">        :param annotation_dir: Directory containing	annotation files.</span>
+<span class="sd">        :param image_dir: Directory	containing images.</span>
+<span class="sd">        :param split: Dataset split, e.g., &quot;train&quot;,	&quot;test&quot;.	Default	is &quot;test&quot;.</span>
+<span class="sd">        :param download: Download data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">download</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_spin</span><span class="p">(</span><span class="n">save_directory</span><span class="o">=</span><span class="n">annotation_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wholes</span><span class="p">:</span> <span class="n">COCO</span> <span class="o">=</span> <span class="n">COCO</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">annotation_dir</span><span class="si">}</span><span class="s2">/spin_</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">_wholes.json&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">:</span> <span class="n">COCO</span> <span class="o">=</span> <span class="n">COCO</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">annotation_dir</span><span class="si">}</span><span class="s2">/spin_</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">_parts.json&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="p">:</span> <span class="n">COCO</span> <span class="o">=</span> <span class="n">COCO</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">annotation_dir</span><span class="si">}</span><span class="s2">/spin_</span><span class="si">{</span><span class="n">split</span><span class="si">}</span><span class="s2">_subparts.json&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">split</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">image_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cocos</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">COCO</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wholes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_cocos</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cocos</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SPIN.get_image">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.get_image">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get	the	image corresponding	to the given image ID.</span>
+
+<span class="sd">        :param image_id: ID	of the image to	retrieve.</span>
+<span class="sd">        :return: PIL Image object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="o">.</span><span class="n">loadImgs</span><span class="p">(</span><span class="n">image_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">image_info</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
+        <span class="n">image_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">image_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.JPEG&quot;</span>
+        <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SPIN.getImgIds">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.getImgIds">[docs]</a>
+    <span class="k">def</span> <span class="nf">getImgIds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get	a list of all image	IDs.</span>
+
+<span class="sd">        :return: List of image IDs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="o">.</span><span class="n">getImgIds</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SPIN.get_object_name_for_file">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.get_object_name_for_file">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_object_name_for_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get	the	object name	corresponding to the given image ID.</span>
+
+<span class="sd">        :param img_id: ID of the image.</span>
+<span class="sd">        :return: Object	name.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="o">.</span><span class="n">loadImgs</span><span class="p">(</span><span class="n">img_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">image_info</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">file_to_object_mapping</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="SPIN.get_categories">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.get_categories">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_categories</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">granularity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;subpart&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Entry</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get	the	categories for a given granularity level.</span>
+
+<span class="sd">        :param granularity:	Level of granularity (&quot;subpart&quot;, &quot;part&quot;, &quot;whole&quot;). Default is &quot;subpart&quot;.</span>
+<span class="sd">        :param verbose:	If True, prints	additional information.	Default	is False.</span>
+<span class="sd">        :return: Dictionary	of categories.</span>
+<span class="sd">        :raises	NotImplementedError: If	the	granularity	is not supported.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">granularity</span> <span class="o">==</span> <span class="s2">&quot;subpart&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="o">.</span><span class="n">cats</span>
+        <span class="k">elif</span> <span class="n">granularity</span> <span class="o">==</span> <span class="s2">&quot;part&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="o">.</span><span class="n">cats</span>
+        <span class="k">elif</span> <span class="n">granularity</span> <span class="o">==</span> <span class="s2">&quot;whole&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wholes</span><span class="o">.</span><span class="n">cats</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Only supports granularity in {subpart,	part, whole}&quot;</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SPIN.display_annotations">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.display_annotations">[docs]</a>
+    <span class="k">def</span> <span class="nf">display_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">image_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fig_size</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">draw_bbox</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Display	annotations	for	a given	image ID.</span>
+
+<span class="sd">        :param image_id: ID	of the image to	display.</span>
+<span class="sd">        :param fig_size: Size of the figure	to display.	Default	is [30,	20].</span>
+<span class="sd">        :param draw_bbox: If True, draw	bounding boxes.	Default	is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig_size</span>
+
+        <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">image_id</span><span class="p">)</span>
+
+        <span class="n">cols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">rows</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Whole&quot;</span><span class="p">,</span> <span class="s2">&quot;Part&quot;</span><span class="p">,</span> <span class="s2">&quot;Subpart&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">coco</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cocos</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">names</span><span class="p">[</span><span class="n">index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+            <span class="n">anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">getAnnIds</span><span class="p">(</span><span class="n">imgIds</span><span class="o">=</span><span class="n">image_id</span><span class="p">)</span>
+            <span class="n">loaded_anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">loadAnns</span><span class="p">(</span><span class="n">anns</span><span class="p">)</span>
+            <span class="n">coco</span><span class="o">.</span><span class="n">showAnns</span><span class="p">(</span><span class="n">loaded_anns</span><span class="p">,</span> <span class="n">draw_bbox</span><span class="o">=</span><span class="n">draw_bbox</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SPIN.rasterize_coco_segmentations">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.rasterize_coco_segmentations">[docs]</a>
+    <span class="k">def</span> <span class="nf">rasterize_coco_segmentations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">coco</span><span class="p">:</span> <span class="n">COCO</span><span class="p">,</span> <span class="n">image_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">background_class</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rasterizes COCO	segmentations for a	specified image, allowing the user to specify which	class is the background.</span>
+
+<span class="sd">        :param coco: COCO object containing	the	dataset	annotations.</span>
+<span class="sd">        :param image_id: ID	of the image to	rasterize segmentations	for.</span>
+<span class="sd">        :param background_class: Class ID to be	used as	the	background.</span>
+<span class="sd">        :return: A 2D numpy	array with the same	dimensions as the image, where each	pixel value	represents the class ID.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">img_info</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">loadImgs</span><span class="p">(</span><span class="n">image_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">],</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+
+        <span class="n">segmentation_map</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">),</span> <span class="n">background_class</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+        <span class="n">ann_ids</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">getAnnIds</span><span class="p">(</span><span class="n">imgIds</span><span class="o">=</span><span class="n">image_id</span><span class="p">)</span>
+        <span class="n">anns</span> <span class="o">=</span> <span class="n">coco</span><span class="o">.</span><span class="n">loadAnns</span><span class="p">(</span><span class="n">ann_ids</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">anns</span><span class="p">:</span>
+            <span class="n">class_id</span> <span class="o">=</span> <span class="n">ann</span><span class="p">[</span><span class="s2">&quot;category_id&quot;</span><span class="p">]</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">maskUtils</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">ann</span><span class="p">[</span><span class="s2">&quot;segmentation&quot;</span><span class="p">])</span>
+            <span class="n">segmentation_map</span><span class="p">[</span><span class="n">mask</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_id</span>
+
+        <span class="k">return</span> <span class="n">segmentation_map</span></div>
+
+
+<div class="viewcode-block" id="SPIN.rasterize_dataset">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.rasterize_dataset">[docs]</a>
+    <span class="k">def</span> <span class="nf">rasterize_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;spin_dataset/annotations&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rasterizes COCO	segmentations for a	specified split	for	all	granularities.</span>
+
+<span class="sd">        :param save_path: Where	to save	annotations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_subpart&quot;</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_part&quot;</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_whole&quot;</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">im_id</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getImgIds</span><span class="p">()):</span>
+            <span class="n">image_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="o">.</span><span class="n">loadImgs</span><span class="p">(</span><span class="n">im_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">fname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">image_info</span><span class="p">[</span><span class="s2">&quot;file_name&quot;</span><span class="p">]</span>
+            <span class="n">raster_sub</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterize_coco_segmentations</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subparts</span><span class="p">,</span> <span class="n">im_id</span><span class="p">,</span> <span class="n">background_class</span><span class="o">=</span><span class="mi">0</span>
+            <span class="p">)</span>
+            <span class="n">raster_part</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterize_coco_segmentations</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parts</span><span class="p">,</span> <span class="n">im_id</span><span class="p">,</span> <span class="n">background_class</span><span class="o">=</span><span class="mi">40</span>
+            <span class="p">)</span>
+            <span class="n">raster_whole</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rasterize_coco_segmentations</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wholes</span><span class="p">,</span> <span class="n">im_id</span><span class="p">,</span> <span class="n">background_class</span><span class="o">=</span><span class="mi">158</span>
+            <span class="p">)</span>
+
+            <span class="n">sub_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_subpart&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.png&quot;</span>
+            <span class="p">)</span>
+            <span class="n">part_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_part&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.png&quot;</span>
+            <span class="p">)</span>
+            <span class="n">whole_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="n">save_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">split</span><span class="si">}</span><span class="s2">_whole&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.png&quot;</span>
+            <span class="p">)</span>
+
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">sub_path</span><span class="p">,</span> <span class="n">raster_sub</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">part_path</span><span class="p">,</span> <span class="n">raster_part</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">whole_path</span><span class="p">,</span> <span class="n">raster_whole</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SPIN.download_spin">
+<a class="viewcode-back" href="../../modules.html#spin.spin.SPIN.download_spin">[docs]</a>
+    <span class="k">def</span> <span class="nf">download_spin</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">link</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;https://joshmyersdean.github.io/spin/spin_coco.zip&quot;</span><span class="p">,</span>
+        <span class="n">save_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;spin_jsons&quot;</span><span class="p">,</span>
+        <span class="n">save_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;spin.zip&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Downloads a	file using a shared	link.</span>
+
+<span class="sd">        :param sharepoint_link:	The	shared link	URL	to the file.</span>
+<span class="sd">        :param save_directory: The directory where the file	should be saved.</span>
+<span class="sd">        :param save_name: The name to save the file	as.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (Windows	NT 10.0; Win64;	x64) AppleWebKit/537.36	(KHTML,	like Gecko)	Chrome/91.0.4472.124 Safari/537.36&quot;</span>
+        <span class="p">}</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">link</span><span class="p">,</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InitialRequestError</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_directory</span><span class="p">,</span> <span class="n">save_name</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">iter_content</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File downloaded	successfully and saved to </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">unzip_file</span><span class="p">(</span><span class="n">zip_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">,</span> <span class="n">extract_to</span><span class="o">=</span><span class="n">save_directory</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
