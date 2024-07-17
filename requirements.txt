@@ -1,3 +1,7 @@
 matplotlib
 pycocotools
 Pillow
+numpy
+tqdm
+opencv-python
+requests
