@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="spin",
+    name="spin-dataset-api",
     version="1.0.0",
     author="Josh Myers-Dean",
     author_email="josh.myers-dean@colorado.edu",

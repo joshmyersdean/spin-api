@@ -9,7 +9,7 @@ This repository supplements the paper "SPIN: Hierarchical Segmentation with Subp
 To install the package, you can use pip:
 
 ```bash
-pip install spin-api
+pip install spin-dataset-api
 ```
 
 We provide an example of how to use the SPIN API in `demo.ipynb`. Of note, we offer functions for downloading the annotations and provide them in a nice COCO format, or allow for rasterization if desired.
